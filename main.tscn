@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://ce0jsb05tveeq" path="res://scripts/player.gd" id="2_player"]
 [ext_resource type="Script" uid="uid://brl7vsgqnjjp3" path="res://scripts/hud.gd" id="3_hud"]
 [ext_resource type="Script" uid="uid://sngvqrikryrr" path="res://scripts/battle.gd" id="4_battle"]
-[ext_resource type="Script" path="res://scripts/mira.gd" id="5_mira"]
-[ext_resource type="Script" path="res://scripts/dialogue_box.gd" id="6_dialogue"]
+[ext_resource type="Script" uid="uid://bha8rh5g5r3f8" path="res://scripts/mira.gd" id="5_mira"]
+[ext_resource type="Script" uid="uid://vioc04pvfcra" path="res://scripts/dialogue_box.gd" id="6_dialogue"]
 
 [sub_resource type="CircleShape2D" id="Shape_body"]
 radius = 6.0
@@ -25,7 +25,7 @@ y_sort_enabled = true
 [node name="Ground" type="TileMapLayer" parent="World" unique_id=746194361]
 z_index = -1
 
-[node name="Decor" type="Node2D" parent="World"]
+[node name="Decor" type="Node2D" parent="World" unique_id=191091503]
 
 [node name="Player" type="CharacterBody2D" parent="World" unique_id=888928494]
 position = Vector2(176, 720)
@@ -54,27 +54,27 @@ limit_bottom = 896
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
-[node name="Mira" type="Area2D" parent="World"]
+[node name="Mira" type="Area2D" parent="World" unique_id=712589511]
 position = Vector2(464, 528)
 script = ExtResource("5_mira")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="World/Mira"]
+[node name="Sprite" type="AnimatedSprite2D" parent="World/Mira" unique_id=155016146]
 texture_filter = 1
 offset = Vector2(0, -16)
 
-[node name="Tart" type="Sprite2D" parent="World/Mira"]
+[node name="Tart" type="Sprite2D" parent="World/Mira" unique_id=351071057]
+texture_filter = 1
 position = Vector2(20, -6)
 scale = Vector2(0.52, 0.52)
-texture_filter = 1
 
-[node name="TartShadow" type="Sprite2D" parent="World/Mira"]
+[node name="TartShadow" type="Sprite2D" parent="World/Mira" unique_id=2123185146]
+texture_filter = 1
 position = Vector2(20, 0)
-texture_filter = 1
 
-[node name="Collision" type="CollisionShape2D" parent="World/Mira"]
+[node name="Collision" type="CollisionShape2D" parent="World/Mira" unique_id=1961766787]
 shape = SubResource("Shape_mira")
 
-[node name="Dialogue" type="CanvasLayer" parent="."]
+[node name="Dialogue" type="CanvasLayer" parent="." unique_id=376956868]
 layer = 8
 script = ExtResource("6_dialogue")
 
