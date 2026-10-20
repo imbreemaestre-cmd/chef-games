@@ -28,24 +28,24 @@ const MIRA := {
 	"wake": {
 		"set": "met_mira",
 		"lines": [
-			{"who": "mira", "text": "Oh, you're awake! I was beginning to think you'd sleep through breakfast."},
-			{"who": "you", "text": "Where am I?"},
-			{"who": "mira", "text": "Sunberry Hollow. You must be new to these parts. Are you a chef?"},
-			{"who": "you", "text": "I'm learning."},
-			{"who": "mira", "text": "Good. The world could use more cooks who are willing to learn."},
-			{"who": "you", "text": "Why's that?"},
-			{"who": "mira", "text": "Because around here, a good meal doesn't just fill your stomach. Sometimes, it gets up and walks away.", "fx": "tart_excited"},
-			{"who": "you", "text": "...Did that tart just move?", "fx": "tart_wobble"},
-			{"who": "mira", "text": "Of course. I baked her this morning. Her name is Bluebell, and she has opinions."},
-			{"who": "mira", "text": "Now, why don't you gather three of those red berries? We can make something of them."},
+			{"who": "mira", "expr": "smiling", "text": "Oh, you're awake! I was beginning to think you'd sleep through breakfast."},
+			{"who": "you", "expr": "confused", "text": "Where am I?"},
+			{"who": "mira", "expr": "neutral", "text": "Sunberry Hollow. You must be new to these parts. Are you a chef?"},
+			{"who": "you", "expr": "embarrassed", "text": "I'm learning."},
+			{"who": "mira", "expr": "smiling", "text": "Good. The world could use more cooks who are willing to learn."},
+			{"who": "you", "expr": "confused", "text": "Why's that?"},
+			{"who": "mira", "expr": "amused", "text": "Because around here, a good meal doesn't just fill your stomach. Sometimes, it gets up and walks away.", "fx": "tart_excited"},
+			{"who": "you", "expr": "confused", "text": "...Did that tart just move?", "fx": "tart_wobble"},
+			{"who": "mira", "expr": "smiling", "text": "Of course. I baked her this morning. Her name is Bluebell, and she has opinions."},
+			{"who": "mira", "expr": "neutral", "text": "Now, why don't you gather three of those red berries? We can make something of them."},
 		],
 		"next": "quest_start",
 	},
 	"quest_start": {
 		"lines": [
-			{"who": "mira", "text": "There's a good patch of them just south of here. Three should do."},
-			{"who": "you", "text": "What kind of berries are they?"},
-			{"who": "mira", "text": "You tell me. A cook who tastes before they trust is a cook who learns."},
+			{"who": "mira", "expr": "neutral", "text": "There's a good patch of them just south of here. Three should do."},
+			{"who": "you", "expr": "confused", "text": "What kind of berries are they?"},
+			{"who": "mira", "expr": "determined", "text": "You tell me. A cook who tastes before they trust is a cook who learns."},
 		],
 		"end": true,
 	},
@@ -53,16 +53,16 @@ const MIRA := {
 	# --- the player has gathered berries and comes back -------------------
 	"berries_return": {
 		"lines": [
-			{"who": "mira", "text": "Three berries! Not bad. Do you know what kind they are?"},
-			{"who": "you", "text": "They're... berries."},
-			{"who": "mira", "text": "An astonishing observation. Culinary school is going to love you."},
-			{"who": "mira", "text": "Keep them. You'll want something to cook with. And here - take a little something from my pack."},
+			{"who": "mira", "expr": "smiling", "text": "Three berries! Not bad. Do you know what kind they are?"},
+			{"who": "you", "expr": "embarrassed", "text": "They're... berries."},
+			{"who": "mira", "expr": "amused", "text": "An astonishing observation. Culinary school is going to love you."},
+			{"who": "mira", "expr": "smiling", "text": "Keep them. You'll want something to cook with. And here - take a little something from my pack."},
 		],
 		"next": "gift_choice",
 	},
 	"gift_choice": {
 		"lines": [
-			{"who": "mira", "text": "Only one, mind. A travelling chef counts her supplies."},
+			{"who": "mira", "expr": "amused", "text": "Only one, mind. A travelling chef counts her supplies."},
 		],
 		"choices": [
 			{
@@ -82,26 +82,26 @@ const MIRA := {
 	"got_ingredients": {
 		"set": "gift_given",
 		"lines": [
-			{"who": "mira", "text": "Sugar and an orange. Sugar sweetens, orange brightens. Put them with those berries and you have a compote."},
-			{"who": "you", "text": "A compote."},
-			{"who": "mira", "text": "Simmered, glossy, and - if you do it right - alive enough to have an opinion."},
+			{"who": "mira", "expr": "smiling", "text": "Sugar and an orange. Sugar sweetens, orange brightens. Put them with those berries and you have a compote."},
+			{"who": "you", "expr": "excited", "text": "A compote."},
+			{"who": "mira", "expr": "amused", "text": "Simmered, glossy, and - if you do it right - alive enough to have an opinion."},
 		],
 		"next": "cook_hint",
 	},
 	"got_tools": {
 		"set": "gift_given",
 		"lines": [
-			{"who": "mira", "text": "A bowl and a spoon. Boring, you're thinking. Boring is reusable."},
-			{"who": "mira", "text": "You'll never lose them, and you'll never have to buy them again. My sugar, on the other hand, gets eaten."},
+			{"who": "mira", "expr": "amused", "text": "A bowl and a spoon. Boring, you're thinking. Boring is reusable."},
+			{"who": "mira", "expr": "smiling", "text": "You'll never lose them, and you'll never have to buy them again. My sugar, on the other hand, gets eaten."},
 		],
 		"next": "cook_hint",
 	},
 	"cook_hint": {
 		"lines": [
-			{"who": "mira", "text": "The campfire behind you will do for a kitchen. Two ways to start, both fair."},
-			{"who": "mira", "text": "Simmer three berries with sugar and orange for a compote. Or hold two over the flame and roast them hot."},
-			{"who": "mira", "text": "Or keep one berry back and see what it does when it stands on its own. Ingredients have minds here."},
-			{"who": "mira", "text": "Come back when you've cooked something and I'll show you what a friendly match looks like."},
+			{"who": "mira", "expr": "neutral", "text": "The campfire behind you will do for a kitchen. Two ways to start, both fair."},
+			{"who": "mira", "expr": "determined", "text": "Simmer three berries with sugar and orange for a compote. Or hold two over the flame and roast them hot."},
+			{"who": "mira", "expr": "neutral", "text": "Or keep one berry back and see what it does when it stands on its own. Ingredients have minds here."},
+			{"who": "mira", "expr": "smiling", "text": "Come back when you've cooked something and I'll show you what a friendly match looks like."},
 		],
 		"end": true,
 	},
@@ -109,7 +109,7 @@ const MIRA := {
 	# --- conversation after the gift --------------------------------------
 	"check_in": {
 		"lines": [
-			{"who": "mira", "text": "How's the cooking going? Don't answer that if the answer is smoke."},
+			{"who": "mira", "expr": "amused", "text": "How's the cooking going? Don't answer that if the answer is smoke."},
 		],
 		"choices": [
 			{"text": "Let's cook something.", "next": "cook_hint"},

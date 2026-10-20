@@ -96,6 +96,7 @@ func _ready() -> void:
 
 	dialogue.set_speed_index(text_speed)
 	_refresh_hud()
+	_probe_portraits()
 
 	# The opening line arrives on its own, once, and can be skipped with Esc.
 	if not loaded and not bool(flags.get("met_mira", false)):
@@ -576,6 +577,19 @@ func _on_dialogue_finished() -> void:
 	_update_quest_from_state()
 	_refresh_hud()
 	_save_game(true)
+
+
+func _probe_portraits() -> void:
+	for who in ["mira", "you", "legendary"]:
+		var found := 0
+		var size := ""
+		for expr in Portraits.EXPRESSIONS.get(who, []):
+			if Portraits.is_illustrated(who, expr):
+				found += 1
+				var t := Portraits.texture(who, expr)
+				if t != null and size == "":
+					size = "%dx%d" % [t.get_width(), t.get_height()]
+		print("PROBE %s illustrated=%d of %d size=%s" % [who, found, Portraits.EXPRESSIONS.get(who, []).size(), size])
 
 
 # Host API used by the dialogue data (dialogue_box.gd calls these by name).
