@@ -33,7 +33,7 @@ script = ExtResource("2_player")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="World/Player" unique_id=1407163858]
 texture_filter = 1
-offset = Vector2(0, -24)
+offset = Vector2(0, -21)
 
 [node name="Collision" type="CollisionShape2D" parent="World/Player" unique_id=1440054356]
 shape = SubResource("Shape_body")
@@ -60,7 +60,7 @@ script = ExtResource("5_mira")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="World/Mira" unique_id=155016146]
 texture_filter = 1
-offset = Vector2(0, -24)
+offset = Vector2(0, -21)
 
 [node name="Tart" type="Sprite2D" parent="World/Mira" unique_id=351071057]
 texture_filter = 1
