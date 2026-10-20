@@ -1,0 +1,51 @@
+{
+ "id": "nature-grass-field",
+ "title": "Grass field: wind-animated grass and meadow flowers (MultiMesh helper)",
+ "kind": "helper",
+ "genres": [
+  "any",
+  "adventure",
+  "open-world",
+  "cozy",
+  "farming",
+  "sports"
+ ],
+ "summary": "GDScript node that fills a rectangle with chunked MultiMesh grass clumps (10 generated blades each, wind gusts, lush/dry colour patches) plus optional 5-petal flowers in several colours. Follows a terrain height function or physics ground. No textures.",
+ "use_when": "Any outdoor 3D scene with a ground plane or terrain that should feel alive: meadows, lawns, fields, forest clearings, around the player spawn.",
+ "how_to_use": "Add a Node3D with script res://starter/nature-grass-field/grass_field.gd (or instance grass_field.tscn) at the centre of the area. Set size (Vector2 metres, default 40x40), density (clumps per m2, 8 lush, 3 sparse; keep size.x*size.y*density under ~15000 for web), blade_height (0.42 m), base_color/tip_color/dry_color, dryness, wind_strength, wind_direction, flower_density (per m2) and flower_colors, clear_radius (bare circle at centre). For hills set terrain = NodePath to a node with get_height(x, z) (nature-terrain); for other ground meshes with collision set use_physics_ray = true. Use a ground colour close to base/tip (e.g. Color(0.12, 0.18, 0.06)). Grass has no collision and casts no shadows.",
+ "entry": [
+  "res://starter/nature-grass-field/grass_field.gd",
+  "res://starter/nature-grass-field/grass_field.tscn"
+ ],
+ "contents": [
+  {
+   "path": "grass_field.gd",
+   "what": "@tool generator (size, density, colours, wind, flowers, terrain/physics height)"
+  },
+  {
+   "path": "grass.gdshader",
+   "what": "wind gust grass shader (UV.y weighted), world-space colour patches"
+  },
+  {
+   "path": "flower.gdshader",
+   "what": "procedural 5-petal flower head + stem"
+  },
+  {
+   "path": "grass_field.tscn",
+   "what": "node with the script, defaults 40x40 m"
+  }
+ ],
+ "deps": [],
+ "scale": "metres, Y-up; the field is centred on the node",
+ "license": "summer",
+ "credit": "",
+ "provenance": "new code written for the shelf, after Lantern Hollow game/layout/grass.gdshader (wind gust idea); procedural geometry, no external assets",
+ "source": "lantern-hollow@66b75b8 (codex/overnight-realism checkout):game/layout/grass.gdshader (reference only)",
+ "verified": {
+  "compatibility": true,
+  "forward_plus": true,
+  "notes": "demo.tscn (36x36 m, density 8) rendered in Compatibility and Forward+ with the preview stage; no script/shader errors; fresh-project copy imports and renders. terrain= path tested on a nature-terrain valley; use_physics_ray path not render-tested. Web frame rate not measured; ~60 tris per clump. v1.1 (2026-10-03, owner rule: building blocks only): demo scene and demo scripts moved out; the remaining pieces are unchanged."
+ },
+ "wow": 4,
+ "bytes": 51652
+}

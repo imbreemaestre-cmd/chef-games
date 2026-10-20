@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://starter/nature-stylized-forest/materials/flower_patch.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://starter/nature-stylized-forest/textures/flower_head_albedo.png" id="2"]
+[ext_resource type="Texture2D" path="res://starter/nature-stylized-forest/textures/flower_head_normal.png" id="3"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/flower_albedo_sampler = ExtResource("2")
+shader_parameter/flower_normal_sampler = ExtResource("3")

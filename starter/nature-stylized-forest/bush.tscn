@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://starter/nature-stylized-forest/models/bush.obj" id="1"]
+[ext_resource type="Material" path="res://starter/nature-stylized-forest/materials/bush_leaves.tres" id="2"]
+
+[node name="StylizedBush" type="MeshInstance3D"]
+material_override = ExtResource("2")
+mesh = ExtResource("1")

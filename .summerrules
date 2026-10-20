@@ -1,0 +1,13 @@
+# Project rules
+
+- Sunberry Hollow is a 2D top-down pixel-art RPG: 640x360 base resolution, 32 px tiles,
+  nearest-neighbour filtering, pixel snapping on. Never rebuild it as 3D.
+- Battlers are the literal dishes with their real culinary names (Berry Compote,
+  Blackberry Tart, Hard-Boiled Egg, Fried Cauliflower). No food monsters, no humanoid or
+  animal food, no fantasy species names.
+- Chef level never blocks a recipe attempt. Only a recipe scroll grants 100% cooking
+  success; unmastered attempts cap at 95%.
+- Equipment access is separate from ownership (an NPC's fryer can be usable before owned).
+- Cooking quality and a food's combat level are separate from chef level.
+- Pixel art is generated procedurally by res://scripts/art.gd until real sprite sheets
+  replace the individual builders.

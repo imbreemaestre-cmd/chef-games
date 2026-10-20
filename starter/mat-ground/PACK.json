@@ -1,0 +1,167 @@
+{
+ "id": "mat-ground",
+ "title": "Ground materials: grass, forest floor, dirt, soil, sand, snow, gravel",
+ "kind": "material",
+ "genres": [
+  "any-3d",
+  "adventure",
+  "survival",
+  "farming",
+  "racing",
+  "open-world"
+ ],
+ "summary": "7 tiling 1K PBR ground materials (CC0 ambientCG): grass, forest_floor, dirt, soil, sand, snow, gravel; each as a world-triplanar .tres (no UVs needed) and a UV .tres.",
+ "use_when": "The scene has an outdoor floor or terrain that should read as real ground instead of a flat colour: lawns, forest, paths, farm fields, beaches, deserts, snowfields, gravel yards.",
+ "how_to_use": "Assign with mesh_instance.material_override = load(\"res://starter/mat-ground/<name>_triplanar.tres\") (or CSGShape3D.material = ...). _triplanar files map in world space at real-world scale with no UVs: use them for level geometry, CSG, BoxMesh/PlaneMesh floors and walls, terrain chunks; pieces placed side by side tile seamlessly. Do not use _triplanar on moving or animated objects (the texture slides); use <name>.tres there and set uv1_scale to mesh size in metres divided by the repeat size. To tint, duplicate the material and set albedo_color. Typical: a 100 x 100 m PlaneMesh ground with grass_triplanar.tres, a path strip of dirt_triplanar.tres raised 1 cm above it.",
+ "entry": [
+  "res://starter/mat-ground/grass_triplanar.tres",
+  "res://starter/mat-ground/forest_floor_triplanar.tres",
+  "res://starter/mat-ground/dirt_triplanar.tres",
+  "res://starter/mat-ground/soil_triplanar.tres",
+  "res://starter/mat-ground/sand_triplanar.tres",
+  "res://starter/mat-ground/snow_triplanar.tres",
+  "res://starter/mat-ground/gravel_triplanar.tres"
+ ],
+ "contents": [
+  {
+   "path": "grass_triplanar.tres",
+   "what": "short dense green lawn grass; world-triplanar, one repeat = 1.4 m, no UVs needed"
+  },
+  {
+   "path": "grass.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 1.4 m)"
+  },
+  {
+   "path": "forest_floor_triplanar.tres",
+   "what": "mossy green-brown forest ground with patchy grass; world-triplanar, one repeat = 2 m, no UVs needed"
+  },
+  {
+   "path": "forest_floor.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 2 m)"
+  },
+  {
+   "path": "dirt_triplanar.tres",
+   "what": "dry light-brown dirt path with small pebbles; world-triplanar, one repeat = 2 m, no UVs needed"
+  },
+  {
+   "path": "dirt.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 2 m)"
+  },
+  {
+   "path": "soil_triplanar.tres",
+   "what": "dark brown loose farm soil / mulch; world-triplanar, one repeat = 1.4 m, no UVs needed"
+  },
+  {
+   "path": "soil.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 1.4 m)"
+  },
+  {
+   "path": "sand_triplanar.tres",
+   "what": "warm beige desert/beach sand with wind ripples; world-triplanar, one repeat = 3.5 m, no UVs needed"
+  },
+  {
+   "path": "sand.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 3.5 m)"
+  },
+  {
+   "path": "snow_triplanar.tres",
+   "what": "bright white packed snow with soft lumps; world-triplanar, one repeat = 2 m, no UVs needed"
+  },
+  {
+   "path": "snow.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 2 m)"
+  },
+  {
+   "path": "gravel_triplanar.tres",
+   "what": "grey pebble gravel; world-triplanar, one repeat = 1.5 m, no UVs needed"
+  },
+  {
+   "path": "gravel.tres",
+   "what": "same maps on UV1 (uv1_scale 1 = one repeat per UV unit; set uv1_scale = mesh metres / 1.5 m)"
+  },
+  {
+   "path": "textures/",
+   "what": "1024 px JPG maps: *_albedo (sRGB), *_normal (OpenGL +Y), *_rough, optional *_metal / *_emission"
+  }
+ ],
+ "deps": [],
+ "scale": "metres; world-triplanar materials tile at the stated physical repeat size",
+ "license": "cc0",
+ "credit": "",
+ "provenance": "ambientCG CC0 materials (photoscanned/procedural); 1K-JPG maps re-encoded as JPEG, albedo multiplied by the set's ambient occlusion at 30-50 %, grass/forest_floor roughness remapped to stay matte.",
+ "source": "ambientcg.com 1K-JPG archives (URL + sha256 per material in source_detail); lantern-hollow@66b75b8 for copied sets",
+ "source_detail": [
+  {
+   "asset": "Grass004",
+   "page": "https://ambientcg.com/a/Grass004",
+   "download": "https://ambientcg.com/get?file=Grass004_1K-JPG.zip",
+   "archive_sha256": "4b63495f459db8481f4d5144e4e9069345c81cf898cc71f2216f5dd3bb344469",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 40%",
+   "roughness_note": "roughness remapped to 0.55..1.0",
+   "material": "grass"
+  },
+  {
+   "asset": "Ground037",
+   "page": "https://ambientcg.com/a/Ground037",
+   "license": "CC0-1.0",
+   "copied_from": "lantern-hollow@66b75b8:game/assets/realism_materials/Ground037/Ground037_2K-JPG_*  (2K, downscaled to 1K)",
+   "color_sha256": "86af35a54593548543a291a54bddfd3568fd90268f8f65d0f8e743b37d714782",
+   "albedo_note": "albedo multiplied by ambient occlusion at 40%",
+   "roughness_note": "roughness remapped to 0.45..1.0",
+   "material": "forest_floor"
+  },
+  {
+   "asset": "Ground103",
+   "page": "https://ambientcg.com/a/Ground103",
+   "download": "https://ambientcg.com/get?file=Ground103_1K-JPG.zip",
+   "archive_sha256": "735471be048f8c41120c3777a22b1f417bf511897c06f6f473edf0a05254362d",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 50%",
+   "material": "dirt"
+  },
+  {
+   "asset": "Ground048",
+   "page": "https://ambientcg.com/a/Ground048",
+   "download": "https://ambientcg.com/get?file=Ground048_1K-JPG.zip",
+   "archive_sha256": "3decfdd20e6c8f8c1ff02840cbd336922fca678e23987111af4bebb0a7a89c96",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 50%",
+   "material": "soil"
+  },
+  {
+   "asset": "Ground054",
+   "page": "https://ambientcg.com/a/Ground054",
+   "download": "https://ambientcg.com/get?file=Ground054_1K-JPG.zip",
+   "archive_sha256": "b325ec2f167dce95a0fabc61a2104641288cf20915419578c3efdb46200c563e",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 50%",
+   "material": "sand"
+  },
+  {
+   "asset": "Snow010A",
+   "page": "https://ambientcg.com/a/Snow010A",
+   "download": "https://ambientcg.com/get?file=Snow010A_1K-JPG.zip",
+   "archive_sha256": "06852017cc69c885b4ee375f4dc8cf16184456b7f6f02de821fb7d2f3cbe8768",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 30%",
+   "material": "snow"
+  },
+  {
+   "asset": "Gravel023",
+   "page": "https://ambientcg.com/a/Gravel023",
+   "download": "https://ambientcg.com/get?file=Gravel023_1K-JPG.zip",
+   "archive_sha256": "a00e7fd6246db4ae228473aac14f1bc427bd93f228ebe347a5d6390dd838b0a8",
+   "license": "CC0-1.0",
+   "albedo_note": "albedo multiplied by ambient occlusion at 50%",
+   "material": "gravel"
+  }
+ ],
+ "verified": {
+  "compatibility": true,
+  "forward_plus": true,
+  "notes": "tools/shoot.sh rendered demo.tscn in Compatibility and Forward+ with no SCRIPT/Parse/shader errors in either log; Compatibility images inspected; tools/fresh_test.sh imported and rendered cleanly in a fresh cloud project. Previews/shots use work/u03-materials/project/tools/mat_stage.tscn (preview_stage with AgX tonemap, exposure 0.75, sky ambient 0.6, darker floor) because the shared preview_stage's sky ambient + sky specular washes textured materials out in Compatibility (Forward+ is fine); fresh_test renders with preview_stage look washed for that reason only. v1.1 (2026-10-03, owner rule: building blocks only): demo scene and demo scripts moved out; the remaining pieces are unchanged."
+ },
+ "wow": 3,
+ "bytes": 10305798
+}

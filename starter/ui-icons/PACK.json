@@ -1,0 +1,64 @@
+{
+ "id": "ui-icons",
+ "title": "110 painted item icons: crops, pets, eggs, tools, food, decor, merchants",
+ "kind": "icon_set",
+ "genres": [
+  "farming",
+  "cozy",
+  "casual",
+  "creature-collector",
+  "crafting",
+  "rpg",
+  "mobile"
+ ],
+ "summary": "110 glossy painted cartoon icons, 256x256 PNG with transparent background and a warm brown outline: 26 crops/fruit/flowers, 24 chibi pet portraits, 9 eggs, 12 tools, 12 foods and stations, 24 decorations, 3 merchant portraits.",
+ "use_when": "Inventory, shop, hotbar, collection book, quest or reward UI in farming, cozy, pet, crafting or casual games. Currency, UI and rarity icons live in ui-kit-core/icons instead.",
+ "how_to_use": "Load res://starter/ui-icons/<folder>/<id>.png as a Texture2D: TextureRect (expand_mode = EXPAND_IGNORE_SIZE, stretch_mode = KEEP_ASPECT_CENTERED, texture_filter = LINEAR_WITH_MIPMAPS), Sprite2D, or with ui-kit-core: UI.icon(...) then icon.texture = load(path); ui-juice hotbar items {\"icon\": load(path), \"count\": 3}; fx.reward_banner(\"NEW PET!\", \"Ember Fox\", load(\"res://starter/ui-icons/pet/ember_fox.png\")). Icons are mipmapped; display them at 48-128 px. Ids are listed per folder in contents.",
+ "entry": [
+  "res://starter/ui-icons/crop/carrot.png",
+  "res://starter/ui-icons/pet/ember_fox.png"
+ ],
+ "contents": [
+  {
+   "path": "crop/",
+   "what": "fruit, vegetables, flowers and fantasy crops: apple bamboo bellflower blueberry cacao cactus carrot cinderbloom coconut corn daffodil dragon_fruit evening_primrose grape lantern_gourd mango mushroom pepper pumpkin seed_packet skyvine strawberry sugar_apple tomato tulip watermelon"
+  },
+  {
+   "path": "pet/",
+   "what": "chibi animal portraits: burrow_pup cheeky_monkey cluck_hen cozy_pup dawn_rooster dusk_bunny ember_fox frost_bear garden_snail ginger_tabby glimmerwing hollow_stag honey_bee hopper_bunny meadow_cow moon_moth nut_squirrel paw_badge praying_mantis river_otter stripe_skunk sunny_retriever whisker_cat woolly_llama"
+  },
+  {
+   "path": "egg/",
+   "what": "pet eggs and a nest: cracked_egg gilded_egg harvest_egg hive_egg meadow_egg nest sky_egg speckled_egg starlit_egg"
+  },
+  {
+   "path": "gear/",
+   "what": "garden tools and sprinklers: drip_sprinkler gathering_rake grand_sprinkler keepsake_ribbon lightning_rod quickgrow_mist radiant_sprinkler seed_packet shovel trowel watering_can whirl_sprinkler"
+  },
+  {
+   "path": "food/",
+   "what": "cooked dishes plus cooking_pot and crafting_tools station icons: berry_jam cocoa_truffle cooking_pot cornbread crafting_tools ember_salsa fruit_salad garden_stew harvest_hotpot petal_tea spiced_gourd_pie tropical_smoothie"
+  },
+  {
+   "path": "decor/",
+   "what": "garden and village decorations: birdhouse brick_path fieldstone_wall firefly_jar glazed_urn hedgehog_hut lantern_string log_bench market_chalkboard merchant_cart moon_gate mossy_flagstones painted_sign patchwork_scarecrow picket_fence post_lamp rose_arch stepping_stones straw_scarecrow straw_skep terracotta_pot willow_fence wisteria_swing workbench"
+  },
+  {
+   "path": "merchant/",
+   "what": "chibi shopkeeper portraits: marigold_brass old_wren pip_thistlewick"
+  }
+ ],
+ "deps": [],
+ "scale": "256x256 px PNG, transparent, mipmapped",
+ "license": "summer",
+ "credit": "",
+ "provenance": "ai:summer-studio (google/nano-banana-2-lite via Summer Studio generate-image, 2026-09-29; asset ids and prompts in grow-your-garden garden/ui/art/SOURCES.md; prompts named commercial games only as style references)",
+ "source": "grow-your-garden@6867b4f:garden/ui/art/icons/{crop,pet,egg,gear,food,decor,merchant}",
+ "verified": {
+  "compatibility": true,
+  "forward_plus": true,
+  "notes": "All 110 icons import with mipmaps and render in Compatibility and Forward+; fresh project clean. Demo scripts re-show their own CanvasLayer every frame because the shelf capture tool hides UI layers between shots; harmless in a game. v1.1 (2026-10-03, owner rule: building blocks only): demo scene and demo scripts moved out; the remaining pieces are unchanged."
+ },
+ "wow": 4,
+ "bytes": 7954049
+}

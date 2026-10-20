@@ -1,0 +1,21 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://cae06vq668tay"]
+
+[ext_resource type="Shader" uid="uid://dumt13m5d0nmc" path="res://starter/nature-stylized-forest/materials/foliage_wind.gdshader" id="1"]
+[ext_resource type="Texture2D" uid="uid://cq83vtng31o5u" path="res://starter/nature-stylized-forest/textures/pine_leaves_albedo.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bq2ut0wekqaev" path="res://starter/nature-stylized-forest/textures/pine_leaves_normal.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://csbui0je0e02v" path="res://starter/nature-stylized-forest/textures/pine_leaves_orm.png" id="4"]
+
+[sub_resource type="FastNoiseLite" id="noise"]
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="noise_tex"]
+noise = SubResource("noise")
+seamless = true
+
+[resource]
+render_priority = 0
+shader = ExtResource("1")
+shader_parameter/wind_noise_sampler = SubResource("noise_tex")
+shader_parameter/albedo_sampler = ExtResource("2")
+shader_parameter/orm_sampler = ExtResource("4")
+shader_parameter/normal_sampler = ExtResource("3")

@@ -1,0 +1,61 @@
+{
+ "id": "nature-stylized-forest",
+ "title": "Stylised forest props: cartoon pine, bush, mushrooms, flowers",
+ "kind": "prop_set",
+ "genres": [
+  "platformer",
+  "adventure",
+  "cozy",
+  "kids",
+  "fantasy"
+ ],
+ "summary": "Hand-painted cartoon forest set from GDQuest RoboBlast: 3 m pine with collision (scale 1.5-2.2 for big trees), 0.8 m leafy bush, 0.9 m mushroom cluster, orange-yellow flower, white flower patch. Wind-animated foliage.",
+ "use_when": "3D platformers, cartoon adventure, kids or cozy prompts that want a painted stylised forest. Pairs well with nature-chunky-trees.",
+ "how_to_use": "Instance res://starter/nature-stylized-forest/pine_tree.tscn (MeshInstance3D root with StaticBody3D cylinder collider, 3 m tall; scale 1.5-2.2 for hero trees), bush.tscn, mushroom.tscn, orange_flower.tscn, flower_patch.tscn (already scaled 2.2). Pivots at ground, metres. Credit line required (see credit).",
+ "entry": [
+  "res://starter/nature-stylized-forest/pine_tree.tscn",
+  "res://starter/nature-stylized-forest/bush.tscn",
+  "res://starter/nature-stylized-forest/mushroom.tscn",
+  "res://starter/nature-stylized-forest/orange_flower.tscn",
+  "res://starter/nature-stylized-forest/flower_patch.tscn"
+ ],
+ "contents": [
+  {
+   "path": "pine_tree.tscn",
+   "what": "3 m cartoon pine, trunk collider"
+  },
+  {
+   "path": "bush.tscn",
+   "what": "1.3 m wide, 0.8 m tall bush"
+  },
+  {
+   "path": "mushroom.tscn",
+   "what": "mushroom cluster"
+  },
+  {
+   "path": "orange_flower.tscn",
+   "what": "single flower with leaves"
+  },
+  {
+   "path": "flower_patch.tscn",
+   "what": "patch of white flowers (1.2 m)"
+  },
+  {
+   "path": "LICENSE.txt",
+   "what": "GDQuest MIT (code) + CC-BY 4.0 (art) notice"
+  }
+ ],
+ "deps": [],
+ "scale": "metres, Y-up, pivot at ground",
+ "license": "cc-by-4.0",
+ "credit": "Stylised forest art CC-BY 4.0 GDQuest (https://www.gdquest.com/), from the RoboBlast 3D third-person controller demo; shaders MIT GDQuest. Textures downscaled and materials simplified by Summer.",
+ "provenance": "GDQuest RoboBlast demo via Summer template-3d-third-person-controller (LICENSE: art CC-BY 4.0, code MIT)",
+ "source": "template-3d-third-person-controller@master:environment/trees, bushes, mushroom, orange_flowers, flowers, simple_leaves",
+ "verified": {
+  "compatibility": true,
+  "forward_plus": true,
+  "notes": "demo.tscn rendered in Compatibility and Forward+ with the preview stage; no script/shader errors; fresh-project copy imports and renders. Bark parallax heightmap from the source material dropped for web. v1.1 (2026-10-03, owner rule: building blocks only): demo scene and demo scripts moved out; the remaining pieces are unchanged."
+ },
+ "wow": 4,
+ "bytes": 1633656
+}

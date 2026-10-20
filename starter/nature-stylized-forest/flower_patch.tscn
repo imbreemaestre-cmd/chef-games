@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://starter/nature-stylized-forest/models/flower_patch.obj" id="1"]
+[ext_resource type="Material" path="res://starter/nature-stylized-forest/materials/flower_patch.tres" id="2"]
+
+[node name="FlowerPatch" type="MeshInstance3D"]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)
+material_override = ExtResource("2")
+cast_shadow = 0
+mesh = ExtResource("1")
