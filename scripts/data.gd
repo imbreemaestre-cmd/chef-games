@@ -1,24 +1,52 @@
 class_name Data
 extends RefCounted
-## Content database for Sunberry Hollow: ingredients, equipment, recipes,
-## foods and battle moves. Everything the cooking and battle systems need is
-## data here, so new dishes are added without touching gameplay code.
+## Content database for Sunberry Hollow: ingredients, tools, equipment,
+## recipes, foods and battle moves. Everything the cooking and battle systems
+## need is data here, so new dishes are added without touching gameplay code.
 
 # --- flavour triangle ---------------------------------------------------
 # Documented rule: sweet > savoury > fresh > sweet.
 # 1.25x damage when strong against the defender, 0.8x when weak.
+# "hot" is a neutral flavour used by roasted dishes: it neither resists nor
+# counters the triangle yet, so roasting is a safe, steady opening choice.
 const FLAVOUR_STRONG := {
 	"sweet": "savoury",
 	"savoury": "fresh",
 	"fresh": "sweet",
 }
 
+# The starting berries stay a mystery: only `secret` records what they are.
 const INGREDIENTS := {
 	"sunberry": {
-		"name": "Sunberry",
+		"name": "??? Berry",
 		"flavour": "sweet",
 		"quality": 1.0,
-		"desc": "A warm red forest berry that sweetens any dish.",
+		"desc": "It's red. It's round. You're reasonably certain it's a berry.",
+		"secret": "Hawthorn Berry",
+	},
+	"sugar": {
+		"name": "Sugar Cube",
+		"flavour": "sweet",
+		"quality": 1.0,
+		"desc": "A hard white cube that dissolves into almost anything.",
+	},
+	"orange": {
+		"name": "Orange",
+		"flavour": "fresh",
+		"quality": 1.1,
+		"desc": "Bright, juicy and slightly too big for one hand.",
+	},
+}
+
+# Reusable tools are separate from ingredients: tools are never consumed.
+const TOOLS := {
+	"bowl": {
+		"name": "Bowl",
+		"desc": "A plain ceramic mixing bowl. Reusable.",
+	},
+	"spoon": {
+		"name": "Spoon",
+		"desc": "A wooden spoon worn smooth by stirring. Reusable.",
 	},
 }
 
@@ -28,7 +56,7 @@ const EQUIPMENT := {
 	"campfire": {
 		"name": "Campfire",
 		"methods": ["simmer", "roast"],
-		"desc": "An open flame. Good for simmering and roasting.",
+		"desc": "An open flame with a flat stone beside it. Good for simmering and roasting.",
 	},
 	"stove": {
 		"name": "Stove",
@@ -58,16 +86,27 @@ const METHOD_LABEL := {
 }
 
 # --- recipes ------------------------------------------------------------
-# `scroll` marks a recipe the player starts with mastered (tutorial scroll).
+# `scroll` marks a recipe the player starts with mastered (100% success).
+# Everything else can still be attempted: knowledge raises the odds, a
+# scroll is the only guarantee.
 const RECIPES := {
 	"berry_compote": {
 		"name": "Berry Compote",
 		"result": "berry_compote",
-		"ingredients": {"sunberry": 3},
-		"methods": ["simmer", "roast"],
+		"ingredients": {"sunberry": 3, "sugar": 1, "orange": 1},
+		"methods": ["simmer"],
 		"difficulty": 1,
-		"scroll": true,
-		"hint": "Sunberries collapse into a glossy compote over any open flame.",
+		"scroll": false,
+		"hint": "Berries, sugar and a squeeze of orange, simmered until glossy.",
+	},
+	"roasted_berries": {
+		"name": "Roasted Berries",
+		"result": "roasted_berries",
+		"ingredients": {"sunberry": 2},
+		"methods": ["roast"],
+		"difficulty": 0,
+		"scroll": false,
+		"hint": "Two berries held over the flame until their skins blister. Hot type.",
 	},
 }
 
@@ -96,6 +135,70 @@ const MOVES := {
 		"flavour": "sweet",
 		"uses": 0,
 		"text": "%s settles low and thickens its skin.",
+	},
+	"roast_toss": {
+		"name": "Scorch Toss",
+		"power": 8,
+		"kind": "attack",
+		"flavour": "hot",
+		"uses": 0,
+		"text": "%s flicks a blistering berry at its rival!",
+	},
+	"smoulder_wrap": {
+		"name": "Smoulder Wrap",
+		"power": 0,
+		"kind": "guard",
+		"flavour": "hot",
+		"uses": 0,
+		"text": "%s pulls its charred skin tight and smoulders quietly.",
+	},
+	"pip_pelt": {
+		"name": "Pip Pelt",
+		"power": 5,
+		"kind": "attack",
+		"flavour": "fresh",
+		"uses": 0,
+		"text": "%s spits a volley of hard little pips!",
+	},
+	"raw_guard": {
+		"name": "Skin Guard",
+		"power": 0,
+		"kind": "guard",
+		"flavour": "fresh",
+		"uses": 0,
+		"text": "%s tightens its shiny skin.",
+	},
+	"sugar_dust": {
+		"name": "Sugar Dust",
+		"power": 5,
+		"kind": "attack",
+		"flavour": "sweet",
+		"uses": 0,
+		"text": "%s scatters a choking cloud of sugar!",
+	},
+	"crystal_guard": {
+		"name": "Crystal Guard",
+		"power": 0,
+		"kind": "guard",
+		"flavour": "sweet",
+		"uses": 0,
+		"text": "%s hardens into a stubborn little crystal.",
+	},
+	"citrus_squirt": {
+		"name": "Citrus Squirt",
+		"power": 6,
+		"kind": "attack",
+		"flavour": "fresh",
+		"uses": 0,
+		"text": "%s fires a stinging jet of juice!",
+	},
+	"zest_guard": {
+		"name": "Zest Guard",
+		"power": 0,
+		"kind": "guard",
+		"flavour": "fresh",
+		"uses": 0,
+		"text": "%s thickens its peel and braces.",
 	},
 	"tart_toss": {
 		"name": "Tart Toss",
@@ -135,7 +238,67 @@ const FOODS := {
 		"spd": 7,
 		"quality": "Standard",
 		"moves": ["berry_splash", "compote_burst", "simmer_guard"],
-		"blurb": "A glossy bowl of stewed sunberries, still bubbling gently.",
+		"blurb": "A glossy bowl of stewed berries, still bubbling gently.",
+	},
+	"roasted_berries": {
+		"name": "Roasted Berries",
+		"flavour": "hot",
+		"method": "roast",
+		"hp": 28,
+		"atk": 8,
+		"def": 5,
+		"spd": 8,
+		"quality": "Standard",
+		"moves": ["roast_toss", "berry_splash", "smoulder_wrap"],
+		"blurb": "Blistered berries on a hot stone. They steam when they move.",
+	},
+	"unknown_berry": {
+		"name": "??? Berry",
+		"flavour": "fresh",
+		"method": "raw",
+		"hp": 24,
+		"atk": 6,
+		"def": 4,
+		"spd": 9,
+		"quality": "Standard",
+		"moves": ["pip_pelt", "berry_splash", "raw_guard"],
+		"blurb": "One red berry, standing on its own. Nobody trained it.",
+	},
+	"sugar_cube": {
+		"name": "Sugar Cube",
+		"flavour": "sweet",
+		"method": "raw",
+		"hp": 20,
+		"atk": 5,
+		"def": 7,
+		"spd": 4,
+		"quality": "Standard",
+		"moves": ["sugar_dust", "crystal_guard"],
+		"blurb": "A hard white cube that hums faintly when prodded.",
+	},
+	"orange": {
+		"name": "Orange",
+		"flavour": "fresh",
+		"method": "raw",
+		"hp": 26,
+		"atk": 7,
+		"def": 5,
+		"spd": 6,
+		"quality": "Standard",
+		"moves": ["citrus_squirt", "zest_guard"],
+		"blurb": "A whole orange, rolling on its own and leaking a little juice.",
+	},
+	"blueberry_tart": {
+		"name": "Blueberry Tart",
+		"flavour": "sweet",
+		"method": "bake",
+		"hp": 26,
+		"atk": 6,
+		"def": 4,
+		"spd": 5,
+		"quality": "Standard",
+		"moves": ["tart_toss", "crumble_blast", "pastry_guard"],
+		"blurb": "Mira's own bake. Blueberries still glisten under the lattice.",
 	},
 	"blackberry_tart": {
 		"name": "Blackberry Tart",
@@ -162,12 +325,24 @@ static func ingredient_name(id: String) -> String:
 	return String(INGREDIENTS.get(id, {}).get("name", id))
 
 
+static func tool(id: String) -> Dictionary:
+	return TOOLS.get(id, {})
+
+
+static func tool_name(id: String) -> String:
+	return String(TOOLS.get(id, {}).get("name", id))
+
+
 static func equipment(id: String) -> Dictionary:
 	return EQUIPMENT.get(id, {})
 
 
 static func recipe(id: String) -> Dictionary:
 	return RECIPES.get(id, {})
+
+
+static func recipe_name(id: String) -> String:
+	return String(RECIPES.get(id, {}).get("name", id))
 
 
 static func food(id: String) -> Dictionary:
@@ -204,7 +379,7 @@ static func damage(power: int, attack: int, defence: int, atk_flavour: String, d
 	return maxi(1, int(round(raw)))
 
 
-## Recipes the given station can attempt, cheapest requirement first.
+## Recipes the given station can attempt.
 static func recipes_for(method_list: Array) -> Array:
 	var out: Array = []
 	for id: String in RECIPES.keys():

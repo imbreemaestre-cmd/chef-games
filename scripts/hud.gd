@@ -4,6 +4,8 @@ extends CanvasLayer
 
 signal cook_requested(recipe_id: String)
 signal menu_toggled(open: bool)
+signal save_requested
+signal text_speed_changed(index: int)
 
 const Fonts := preload("res://starter/ui-fonts/fonts.gd")
 
@@ -14,9 +16,15 @@ const TRIM := Color(0.45, 0.29, 0.18)
 const HONEY := Color(0.99, 0.80, 0.44)
 const MINT := Color(0.60, 0.82, 0.55)
 
+const SPEED_NAMES := ["Slow", "Normal", "Fast"]
+
 var berry_icon: TextureRect
 var berry_label: Label
 var party_label: Label
+var quest_panel: PanelContainer
+var quest_label: Label
+var speed_button: Button
+var _speed_index := 1
 var prompt_label: Label
 var toast_label: Label
 var hint_label: Label
@@ -93,6 +101,21 @@ func _build() -> void:
 	party_label = Fonts.label("Party: empty", 11, Color(1, 0.97, 0.90), Fonts.sans(700), 4)
 	party_label.position = Vector2(10, 40)
 	add_child(party_label)
+
+	# objective banner across the top, kept clear of the berry counter
+	quest_panel = PanelContainer.new()
+	quest_panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	quest_panel.offset_left = 96
+	quest_panel.offset_right = -96
+	quest_panel.offset_top = 8
+	quest_panel.add_theme_stylebox_override("panel", _style(Color(0.20, 0.15, 0.10, 0.78), HONEY, 8, 8))
+	quest_panel.visible = false
+	add_child(quest_panel)
+
+	quest_label = Fonts.label("", 10, HONEY.lerp(Color.WHITE, 0.35), Fonts.sans(700))
+	quest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	quest_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	quest_panel.add_child(quest_label)
 
 	prompt_label = Fonts.label("", 12, Color(1, 0.98, 0.92), Fonts.sans(800), 5)
 	prompt_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -189,8 +212,8 @@ func _build_menu() -> void:
 	panel.set_anchors_preset(Control.PRESET_CENTER)
 	panel.offset_left = -150
 	panel.offset_right = 150
-	panel.offset_top = -92
-	panel.offset_bottom = 92
+	panel.offset_top = -124
+	panel.offset_bottom = 124
 	panel.add_theme_stylebox_override("panel", _style(PAPER, TRIM, 10, 14))
 	menu_root.add_child(panel)
 
@@ -218,9 +241,24 @@ func _build_menu() -> void:
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(spacer)
 
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 8)
+	col.add_child(buttons)
+
+	speed_button = _button("Text: %s" % SPEED_NAMES[_speed_index])
+	speed_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	speed_button.pressed.connect(_cycle_speed)
+	buttons.add_child(speed_button)
+
+	var save_button := _button("Save")
+	save_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	save_button.pressed.connect(func() -> void: save_requested.emit())
+	buttons.add_child(save_button)
+
 	var resume := _button("Back to the forest")
+	resume.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	resume.pressed.connect(close_menu)
-	col.add_child(resume)
+	buttons.add_child(resume)
 
 
 # --- runtime updates ----------------------------------------------------
@@ -231,6 +269,24 @@ func set_berries(n: int) -> void:
 
 func set_party(text: String) -> void:
 	party_label.text = text
+
+
+func set_quest(text: String) -> void:
+	var clean := text.strip_edges()
+	quest_label.text = clean
+	quest_panel.visible = not clean.is_empty()
+
+
+func set_speed_index(index: int) -> void:
+	_speed_index = clampi(index, 0, 2)
+	if speed_button != null:
+		speed_button.text = "Text: %s" % SPEED_NAMES[_speed_index]
+
+
+func _cycle_speed() -> void:
+	_speed_index = (_speed_index + 1) % 3
+	speed_button.text = "Text: %s" % SPEED_NAMES[_speed_index]
+	text_speed_changed.emit(_speed_index)
 
 
 func show_prompt(text: String) -> void:
