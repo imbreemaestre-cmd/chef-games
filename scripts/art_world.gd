@@ -12,8 +12,8 @@ extends RefCounted
 ## fringe, so no straight tile edge is ever visible on a path.
 
 const TILE := 32
-const TREE_W := 72
-const TREE_H := 100
+const TREE_W := 112
+const TREE_H := 168
 
 # --- grass family --------------------------------------------------------
 const GRASS_DEEP := Color(0.20, 0.35, 0.19)
@@ -344,7 +344,9 @@ static func dirt_patch(variant: int) -> Texture2D:
 
 # --- trees and undergrowth ----------------------------------------------
 
-## Five birch variants, 72x100, trunk base at (36, 96).
+## Five full birch variants, 112x168, trunk base at (56, 164).
+## Tall layered canopies so the tree line reads as real forest rather than
+## shrubs, and so the player can disappear behind them.
 static func tree(variant: int) -> Texture2D:
 	var v := variant % 5
 	var key := "tree_%d" % v
@@ -353,70 +355,96 @@ static func tree(variant: int) -> Texture2D:
 	var img := _img(TREE_W, TREE_H)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3300 + v * 91
-	var cx := 36
-	var base := 96
-	var lean: int = [-2, 1, 3, 0, -1][v]
-	var trunk_w: int = [6, 5, 7, 5, 6][v]
+	var cx := 56
+	var base := 164
+	var lean: int = [-3, 2, 4, 0, -2][v]
+	var trunk_w: int = [9, 8, 10, 8, 9][v]
+	var trunk_h: int = [66, 58, 72, 62, 68][v]
+	var canopy_y: int = [86, 78, 90, 82, 88][v]
 
-	_shadow(img, cx, base, 20, 5)
+	_shadow(img, cx, base, 26, 6)
 
 	# roots splaying into the grass
-	_line(img, cx - 2, base - 8, cx - 9, base - 1, BARK_DARK)
-	_line(img, cx + 2, base - 8, cx + 10, base - 2, BARK_DARK)
-	_line(img, cx - 1, base - 6, cx - 5, base, BARK)
-	_line(img, cx + 1, base - 6, cx + 6, base - 1, BARK)
+	_line(img, cx - 4, base - 12, cx - 14, base - 1, BARK_DARK)
+	_line(img, cx + 4, base - 12, cx + 15, base - 2, BARK_DARK)
+	_line(img, cx - 2, base - 9, cx - 8, base, BARK)
+	_line(img, cx + 2, base - 9, cx + 9, base - 1, BARK)
 
 	# trunk: birch white with dark lenticels
 	var tx: int = cx - trunk_w / 2 + lean
-	_rect(img, tx, base - 58, trunk_w, 58, BIRCH)
-	_rect(img, tx, base - 58, 1, 58, BIRCH.lerp(Color.BLACK, 0.18))
-	_rect(img, tx + trunk_w - 1, base - 58, 1, 58, BIRCH.lerp(Color.BLACK, 0.24))
-	for i in range(9):
-		var my := base - 56 + i * 6 + rng.randi_range(0, 2)
-		var mw := rng.randi_range(1, maxi(1, trunk_w - 2))
+	var ty := base - trunk_h
+	_rect(img, tx, ty, trunk_w, trunk_h, BIRCH)
+	_rect(img, tx, ty, 2, trunk_h, BIRCH.lerp(Color.BLACK, 0.16))
+	_rect(img, tx + trunk_w - 2, ty, 2, trunk_h, BIRCH.lerp(Color.BLACK, 0.26))
+	for i in range(int(trunk_h / 6.0)):
+		var my := ty + 3 + i * 6 + rng.randi_range(0, 2)
+		var mw := rng.randi_range(2, maxi(2, trunk_w - 3))
 		_rect(img, tx + rng.randi_range(1, maxi(1, trunk_w - 1 - mw)), my, mw, 1, BIRCH_MARK)
-	# bark shadow where the canopy blocks light
-	_rect(img, tx, base - 34, trunk_w, 2, BIRCH.lerp(BARK, 0.25))
+	# bark shading where the canopy blocks the light
+	_rect(img, tx, ty + 12, trunk_w, 3, BIRCH.lerp(BARK, 0.3))
+	_rect(img, tx, ty + 40, trunk_w, 2, BIRCH.lerp(BARK, 0.18))
 
-	# branches reaching into the canopy
-	_line(img, cx, base - 48, cx - 15 + lean, base - 62, BIRCH)
-	_line(img, cx, base - 40, cx + 16 - lean, base - 58, BIRCH)
-	_line(img, cx - 15 + lean, base - 62, cx - 21, base - 68, BIRCH_MARK)
-	_line(img, cx + 16 - lean, base - 58, cx + 24, base - 66, BIRCH_MARK)
+	# branches reaching out under the canopy
+	_line(img, cx, ty + 8, cx - 20 + lean, ty - 16, BIRCH)
+	_line(img, cx, ty + 20, cx + 22 - lean, ty - 12, BIRCH)
+	_line(img, cx - 20 + lean, ty - 16, cx - 30, ty - 26, BIRCH_MARK)
+	_line(img, cx + 22 - lean, ty - 12, cx + 32, ty - 22, BIRCH_MARK)
 
-	# canopy: dark underside, then mid mass, then sunlit crown
-	var cy := 30 - v % 2 * 2
-	_ellipse(img, cx + lean, cy + 10, 26, 16, LEAF_DEEP)
-	_ellipse(img, cx - 16 + lean, cy + 12, 14, 11, LEAF_DEEP)
-	_ellipse(img, cx + 17 + lean, cy + 13, 13, 10, LEAF_DEEP)
-
-	_ellipse(img, cx - 13 + lean, cy + 6, 15, 12, LEAF_DARK)
-	_ellipse(img, cx + 14 + lean, cy + 7, 14, 11, LEAF_DARK)
-	_ellipse(img, cx + lean, cy + 2, 20, 14, LEAF_DARK)
-
-	_ellipse(img, cx - 10 + lean, cy - 1, 12, 9, LEAF)
-	_ellipse(img, cx + 11 + lean, cy + 1, 11, 8, LEAF)
-	_ellipse(img, cx + lean, cy - 5, 15, 10, LEAF)
-
-	_ellipse(img, cx - 6 + lean, cy - 8, 8, 6, LEAF_LIGHT)
-	_ellipse(img, cx + 8 + lean, cy - 5, 7, 5, LEAF_LIGHT)
-	_ellipse(img, cx + lean, cy - 12, 9, 6, LEAF_LIGHT)
-
-	# clumps of individual leaves on top for texture
-	for i in range(22):
-		var lx: int = cx + rng.randi_range(-22, 22) + lean
-		var ly := cy + rng.randi_range(-14, 12)
-		var c: Color = LEAF_PALE if rng.randf() < 0.45 else LEAF_LIGHT
-		_px(img, lx, ly, c)
-		if rng.randf() < 0.4:
-			_px(img, lx + 1, ly, c.darkened(0.12))
-	# a few turning leaves
-	for i in range(4):
-		_px(img, cx + rng.randi_range(-18, 18) + lean, cy + rng.randi_range(-8, 8), LEAF_FALL_2)
+	_canopy(img, cx + lean, canopy_y, rng)
 
 	var t := _tex(img)
 	_cache[key] = t
 	return t
+
+
+## The leafy mass: five tonal layers from a deep underside to a pale crown,
+## then scattered individual leaf clumps and a chewed silhouette.
+static func _canopy(img: Image, cx: int, cy: int, rng: RandomNumberGenerator) -> void:
+	_ellipse(img, cx, cy + 14, 42, 24, LEAF_DEEP)
+	_ellipse(img, cx - 26, cy + 16, 22, 16, LEAF_DEEP)
+	_ellipse(img, cx + 27, cy + 17, 21, 15, LEAF_DEEP)
+
+	_ellipse(img, cx - 20, cy + 6, 24, 19, LEAF_DARK)
+	_ellipse(img, cx + 21, cy + 7, 23, 18, LEAF_DARK)
+	_ellipse(img, cx, cy + 2, 32, 22, LEAF_DARK)
+
+	_ellipse(img, cx - 14, cy - 4, 20, 15, LEAF)
+	_ellipse(img, cx + 16, cy - 2, 19, 14, LEAF)
+	_ellipse(img, cx, cy - 10, 25, 17, LEAF)
+
+	_ellipse(img, cx - 9, cy - 14, 13, 10, LEAF_LIGHT)
+	_ellipse(img, cx + 13, cy - 10, 12, 9, LEAF_LIGHT)
+	_ellipse(img, cx + 1, cy - 20, 15, 11, LEAF_LIGHT)
+
+	_ellipse(img, cx - 5, cy - 24, 9, 6, LEAF_PALE)
+	_ellipse(img, cx + 10, cy - 18, 7, 5, LEAF_PALE)
+
+	# clumps of individual leaves for dappled texture
+	for i in range(90):
+		var a := rng.randf() * TAU
+		var rad := sqrt(rng.randf())
+		var lx := cx + int(round(cos(a) * rad * 40.0))
+		var ly := cy + int(round(sin(a) * rad * 26.0)) - 4
+		var roll := rng.randf()
+		var c: Color = LEAF_PALE if roll < 0.22 else (LEAF_LIGHT if roll < 0.58 else LEAF_DARK)
+		_px(img, lx, ly, c)
+		if rng.randf() < 0.35:
+			_px(img, lx + 1, ly, c.darkened(0.14))
+		if rng.randf() < 0.2:
+			_px(img, lx, ly + 1, c.darkened(0.2))
+
+	# a few turning leaves catching the light
+	for i in range(10):
+		_px(img, cx + rng.randi_range(-34, 34), cy + rng.randi_range(-22, 18), LEAF_FALL_2)
+
+	# chew the silhouette so the canopy edge never looks like a perfect circle
+	for i in range(420):
+		var ang := rng.randf() * TAU
+		var rim := rng.randf_range(0.90, 1.04)
+		var ex := cx + int(round(cos(ang) * 44.0 * rim))
+		var ey := cy + 4 + int(round(sin(ang) * 30.0 * rim))
+		if ex >= 0 and ey >= 0 and ex < img.get_width() and ey < img.get_height():
+			img.set_pixel(ex, ey, Color(0, 0, 0, 0))
 
 
 ## A stump for the clearing edge.
@@ -608,3 +636,111 @@ static func bedroll() -> Texture2D:
 	var t := _tex(img)
 	_cache["bedroll"] = t
 	return t
+
+
+# --- small wildlife -----------------------------------------------------
+
+## A hoppy little rabbit, 18x16, facing right. Two frames: crouched and mid-hop.
+static func rabbit(frame: int) -> Texture2D:
+	var key := "rabbit_%d" % (frame % 2)
+	if _cache.has(key):
+		return _cache[key]
+	var img := _img(18, 16)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4411
+	var fur := Color(0.74, 0.66, 0.56)
+	var fur_dark := Color(0.56, 0.48, 0.40)
+	var fur_light := Color(0.88, 0.83, 0.75)
+	var hop := 1 if frame % 2 == 1 else 0
+	_shadow(img, 8, 14, 6, 2)
+	# body
+	_ellipse(img, 7, 10 - hop, 6, 4, fur)
+	_ellipse(img, 6, 9 - hop, 4, 3, fur_light)
+	_ellipse(img, 7, 12 - hop, 5, 2, fur_dark)
+	# head
+	_ellipse(img, 13, 8 - hop, 3, 3, fur)
+	_px(img, 14, 8 - hop, Color(0.20, 0.16, 0.14))
+	_px(img, 11, 7 - hop, fur_light)
+	# ears
+	_rect(img, 12, 3 - hop, 1, 4, fur)
+	_rect(img, 14, 4 - hop, 1, 3, fur_dark)
+	_px(img, 12, 3 - hop, fur_light)
+	# tail
+	_ellipse(img, 2, 10 - hop, 2, 2, fur_light)
+	# feet
+	if hop == 1:
+		_px(img, 10, 13, fur_dark)
+		_px(img, 5, 13, fur_dark)
+	else:
+		_rect(img, 9, 13, 3, 1, fur_dark)
+		_rect(img, 4, 13, 3, 1, fur_dark)
+	var t := _tex(img)
+	_cache[key] = t
+	return t
+
+
+static func rabbit_frames() -> SpriteFrames:
+	if _cache.has("rabbit_frames"):
+		return _cache["rabbit_frames"]
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"hop")
+	frames.set_animation_speed(&"hop", 7.0)
+	frames.set_animation_loop(&"hop", true)
+	frames.add_frame(&"hop", rabbit(0))
+	frames.add_frame(&"hop", rabbit(1))
+	_cache["rabbit_frames"] = frames
+	return frames
+
+
+## A perky little songbird, 14x12, facing right. Two frames: still and pecking.
+static func bird(frame: int) -> Texture2D:
+	var key := "bird_%d" % (frame % 2)
+	if _cache.has(key):
+		return _cache[key]
+	var img := _img(14, 12)
+	var body := Color(0.55, 0.42, 0.31)
+	var body_dark := Color(0.40, 0.30, 0.22)
+	var belly := Color(0.86, 0.76, 0.60)
+	var wing := Color(0.47, 0.35, 0.26)
+	var beak := Color(0.95, 0.72, 0.31)
+	var bob := 1 if frame % 2 == 1 else 0
+	_shadow(img, 6, 11, 4, 1)
+	_ellipse(img, 6, 7 + bob, 4, 3, body)
+	_ellipse(img, 6, 8 + bob, 3, 2, belly)
+	_ellipse(img, 9, 5 + bob, 2, 2, body)
+	_px(img, 10, 4 + bob, body_dark)
+	_px(img, 10, 5 + bob, body_dark)
+	# beak
+	_px(img, 11, 5 + bob, beak)
+	_px(img, 12, 5 + bob, beak.darkened(0.12))
+	# wing
+	_ellipse(img, 5, 7 + bob, 2, 2, wing)
+	_px(img, 4, 6 + bob, body_dark)
+	# tail
+	_line(img, 2, 7 + bob, 0, 5 + bob, body_dark)
+	# legs
+	_px(img, 6, 10, bone_or(beak))
+	_px(img, 7, 10, bone_or(beak))
+	var t := _tex(img)
+	_cache[key] = t
+	return t
+
+
+## Legs read better as a dull yellow than as beak orange.
+static func bone_or(_c: Color) -> Color:
+	return Color(0.84, 0.66, 0.34)
+
+
+static func bird_frames() -> SpriteFrames:
+	if _cache.has("bird_frames"):
+		return _cache["bird_frames"]
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"peck")
+	frames.set_animation_speed(&"peck", 4.5)
+	frames.set_animation_loop(&"peck", true)
+	frames.add_frame(&"peck", bird(0))
+	frames.add_frame(&"peck", bird(1))
+	_cache["bird_frames"] = frames
+	return frames

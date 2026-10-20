@@ -10,6 +10,9 @@ const FRICTION := 1100.0
 var control_enabled := true
 var facing := 0  # 0 down, 1 up, 2 right, 3 left
 
+var _action := ""
+var _action_left := 0.0
+
 @onready var sprite: AnimatedSprite2D = $Sprite
 @onready var interact_area: Area2D = $InteractArea
 
@@ -21,12 +24,26 @@ func _ready() -> void:
 	facing = 0
 
 
+## A short one-off pose (cook, talk, react) that holds until it expires or the
+## player starts walking again. Presentation only; never blocks control.
+func play_action(anim: String, seconds := 1.0) -> void:
+	_action = anim
+	_action_left = seconds
+
+
 func _physics_process(delta: float) -> void:
+	if _action_left > 0.0:
+		_action_left = maxf(0.0, _action_left - delta)
+		if _action_left == 0.0:
+			_action = ""
+
 	var input := Vector2.ZERO
 	if control_enabled:
 		input = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 
 	if input.length() > 0.1:
+		_action = ""
+		_action_left = 0.0
 		var speed := RUN_SPEED if Input.is_action_pressed("sprint") else SPEED
 		velocity = velocity.move_toward(input.normalized() * speed, ACCEL * delta)
 		_update_facing(input)
@@ -49,12 +66,14 @@ func _animate(moving: bool, speed: float) -> void:
 	var dirs := ["down", "up", "right", "left"]
 	var base: String = dirs[facing]
 	if moving:
-		var anim := StringName(base + "_walk")
+		var suffix := "_run" if speed > SPEED + 1.0 else "_walk"
+		var anim := StringName(base + suffix)
 		if sprite.animation != anim:
 			sprite.play(anim)
-		sprite.speed_scale = clampf(speed / SPEED, 0.85, 1.7)
+		sprite.speed_scale = clampf(speed / RUN_SPEED, 0.85, 1.35)
 	else:
-		var anim := StringName(base + "_idle")
+		var suffix := "_idle" if _action == "" else ("_" + _action)
+		var anim := StringName(base + suffix)
 		if sprite.animation != anim:
 			sprite.play(anim)
 		sprite.speed_scale = 1.0

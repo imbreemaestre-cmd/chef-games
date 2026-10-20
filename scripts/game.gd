@@ -229,6 +229,27 @@ func _build_props() -> void:
 	_build_campsite()
 	_spawn_trees(path)
 	_build_undergrowth(path)
+	_build_wildlife()
+
+
+## Rabbits and songbirds, kept off the trail and away from the campfire.
+func _build_wildlife() -> void:
+	var spots := [
+		["rabbit", Vector2i(7, 22)], ["rabbit", Vector2i(21, 23)],
+		["rabbit", Vector2i(26, 20)], ["bird", Vector2i(9, 17)],
+		["bird", Vector2i(19, 19)], ["bird", Vector2i(24, 22)],
+	]
+	for entry: Array in spots:
+		var node := Node2D.new()
+		node.set_script(load("res://scripts/critter.gd"))
+		node.set("kind", String(entry[0]))
+		node.global_position = _tile_center(entry[1]) + Vector2(6, -4)
+
+		var sprite := AnimatedSprite2D.new()
+		sprite.name = "Sprite"
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		node.add_child(sprite)
+		world.add_child(node)
 
 
 func _is_keepout(cell: Vector2i, path: Dictionary) -> bool:
@@ -252,13 +273,14 @@ func _spawn_trees(path: Dictionary) -> void:
 			var cell := Vector2i(x, y)
 			if taken.has(cell) or _is_keepout(cell, path):
 				continue
-			var edge := x < 4 or y < 4 or x >= MAP_W - 4 or y >= MAP_H - 4
-			var chance := 0.68 if edge else 0.045
+			var edge := x < 5 or y < 5 or x >= MAP_W - 5 or y >= MAP_H - 5
+			# The canopies are much wider now, so trees need breathing room.
+			var chance := 0.55 if edge else 0.03
 			if rng.randf() >= chance:
 				continue
 			_spawn_tree(_tile_center(cell) + Vector2(0, 10), rng.randi_range(0, 3))
-			for dy in range(-1, 2):
-				for dx in range(-1, 2):
+			for dy in range(-2, 3):
+				for dx in range(-2, 3):
 					taken[Vector2i(x + dx, y + dy)] = true
 
 
@@ -274,22 +296,22 @@ func _spawn_tree(pos: Vector2, variant: int) -> void:
 	shadow.texture = Art.shadow()
 	shadow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	shadow.position = Vector2(0, -4)
-	shadow.scale = Vector2(1.6, 1.5)
+	shadow.scale = Vector2(2.6, 2.1)
 	shadow.z_index = -1
 	decor.add_child(shadow)
-	shadow.global_position = pos + Vector2(4, 0)
+	shadow.global_position = pos + Vector2(6, 0)
 
 	var sprite := Sprite2D.new()
 	sprite.texture = ArtWorld.tree(variant)
-	sprite.offset = Vector2(0, -48)
+	sprite.offset = Vector2(0, -80)
 	_nearest_texture(sprite)
 	body.add_child(sprite)
 
 	var shape := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
-	circle.radius = 7.0
+	circle.radius = 10.0
 	shape.shape = circle
-	shape.position = Vector2(0, -4)
+	shape.position = Vector2(0, -6)
 	body.add_child(shape)
 	world.add_child(body)
 
@@ -541,12 +563,14 @@ func talk_to_mira(npc: Node) -> void:
 		npc.set_talking(true)
 	dialogue_open = true
 	player.stop()
+	player.play_action("talk", 60.0)
 	hud.hide_prompt()
 	dialogue.start(Dialogues.MIRA, start_id, self)
 
 
 func _on_dialogue_finished() -> void:
 	dialogue_open = false
+	player.play_action("", 0.0)
 	if _mira != null and is_instance_valid(_mira) and _mira.has_method("set_talking"):
 		_mira.set_talking(false)
 	_update_quest_from_state()
@@ -641,6 +665,7 @@ func open_cooking(station_id: String) -> void:
 	var method_text := "-"
 	if not methods.is_empty():
 		method_text = Data.method_label(String(methods[0]))
+	player.play_action("cook", 2.5)
 	hud.open_cooking(
 		String(station.get("name", station_id)),
 		"%s   -   %d option%s" % [method_text, entries.size(), "" if entries.size() == 1 else "s"],

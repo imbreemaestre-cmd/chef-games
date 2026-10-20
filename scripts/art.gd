@@ -444,25 +444,11 @@ static func chef(cell: int, frame: int) -> Texture2D:
 	return t
 
 
-## 4 directions x (idle + 4 frame walk).
+## 4 directions x (idle, walk, run, talk). Drawn by ArtChars now.
 static func chef_frames() -> SpriteFrames:
 	if _cache.has("chef_frames"):
 		return _cache["chef_frames"]
-	var dirs := ["down", "up", "right", "left"]
-	var frames := SpriteFrames.new()
-	frames.remove_animation(&"default")
-	for cell in range(4):
-		var idle_name := StringName(dirs[cell] + "_idle")
-		var walk_name := StringName(dirs[cell] + "_walk")
-		frames.add_animation(idle_name)
-		frames.set_animation_speed(idle_name, 4.0)
-		frames.set_animation_loop(idle_name, true)
-		frames.add_frame(idle_name, chef(cell, 0))
-		frames.add_animation(walk_name)
-		frames.set_animation_speed(walk_name, 8.0)
-		frames.set_animation_loop(walk_name, true)
-		for f in range(4):
-			frames.add_frame(walk_name, chef(cell, f))
+	var frames := ArtChars.player_frames()
 	_cache["chef_frames"] = frames
 	return frames
 
@@ -916,34 +902,11 @@ static func mira(cell: int, frame: int, pose: int = 0) -> Texture2D:
 	return t
 
 
-## 4 directions, idle + walk, plus a two frame talking gesture per direction.
+## 4 directions, idle / walk / run / talk. Drawn by ArtChars now.
 static func mira_frames() -> SpriteFrames:
 	if _cache.has("mira_frames"):
 		return _cache["mira_frames"]
-	var dirs := ["down", "up", "right", "left"]
-	var frames := SpriteFrames.new()
-	frames.remove_animation(&"default")
-	for cell in range(4):
-		var idle_name := StringName(dirs[cell] + "_idle")
-		frames.add_animation(idle_name)
-		frames.set_animation_speed(idle_name, 3.0)
-		frames.set_animation_loop(idle_name, true)
-		frames.add_frame(idle_name, mira(cell, 0))
-		frames.add_frame(idle_name, mira(cell, 1))
-
-		var walk_name := StringName(dirs[cell] + "_walk")
-		frames.add_animation(walk_name)
-		frames.set_animation_speed(walk_name, 7.0)
-		frames.set_animation_loop(walk_name, true)
-		for f in range(4):
-			frames.add_frame(walk_name, mira(cell, f))
-
-		var talk_name := StringName(dirs[cell] + "_talk")
-		frames.add_animation(talk_name)
-		frames.set_animation_speed(talk_name, 4.0)
-		frames.set_animation_loop(talk_name, true)
-		frames.add_frame(talk_name, mira(cell, 0, 1))
-		frames.add_frame(talk_name, mira(cell, 2, 0))
+	var frames := ArtChars.mira_frames()
 	_cache["mira_frames"] = frames
 	return frames
 
@@ -952,6 +915,10 @@ static func mira_frames() -> SpriteFrames:
 
 ## 48x48 dialogue bust for the player ("chef") or Chef Mira.
 static func portrait(kind: String) -> Texture2D:
+	return ArtChars.portrait(kind)
+
+
+static func _portrait_legacy(kind: String) -> Texture2D:
 	var key := "portrait_%s" % kind
 	if _cache.has(key):
 		return _cache[key]
