@@ -268,7 +268,9 @@ func set_berries(n: int) -> void:
 
 
 func set_party(text: String) -> void:
-	party_label.text = text
+	var clean := text.strip_edges()
+	party_label.text = clean
+	party_label.visible = clean != ""
 
 
 func set_quest(text: String) -> void:

@@ -186,6 +186,7 @@ func _paint_ground() -> void:
 		for cell: Vector2i in _cells_near(tile, 1):
 			if rng.randf() < 0.35:
 				ground.set_cell(cell, 0, Vector2i(9, 0))
+	_paint_ground_rich()
 
 
 func _build_decor() -> void:
@@ -219,12 +220,15 @@ func _build_decor() -> void:
 
 func _build_props() -> void:
 	var path := _path_cells()
+	_build_trail()
 	for tile: Vector2i in BUSH_TILES:
 		_spawn_bush(tile)
 	for tile: Vector2i in ROCK_TILES:
 		_spawn_rock(tile)
 	_spawn_campfire(CAMPFIRE_TILE)
+	_build_campsite()
 	_spawn_trees(path)
+	_build_undergrowth(path)
 
 
 func _is_keepout(cell: Vector2i, path: Dictionary) -> bool:
@@ -276,8 +280,8 @@ func _spawn_tree(pos: Vector2, variant: int) -> void:
 	shadow.global_position = pos + Vector2(4, 0)
 
 	var sprite := Sprite2D.new()
-	sprite.texture = Art.tree_variant(variant)
-	sprite.offset = Vector2(0, -36)
+	sprite.texture = ArtWorld.tree(variant)
+	sprite.offset = Vector2(0, -48)
 	_nearest_texture(sprite)
 	body.add_child(sprite)
 
@@ -936,15 +940,9 @@ func _refresh_hud() -> void:
 	if not party.is_empty():
 		for id: String in party:
 			lines.append(Data.food_name(id))
-	if not tools.is_empty():
-		var tool_names: Array[String] = []
-		for id: String in tools:
-			tool_names.append(Data.tool_name(id))
-		lines.append("- " + ", ".join(tool_names))
-	if lines.is_empty():
-		hud.set_party("Party: empty")
-	else:
-		hud.set_party("\n".join(lines))
+	# Tools and the full pantry live in the menu. The forest keeps one compact
+	# line so the interface never covers the scene.
+	hud.set_party(", ".join(lines))
 
 
 func _stats_text() -> String:
@@ -971,3 +969,145 @@ func _stats_text() -> String:
 		chef_level, chef_xp, stock_text, tool_text, party_text,
 		int(proficiency.get("simmer", 0.0)), int(proficiency.get("roast", 0.0)), mastered.size(),
 	]
+
+
+# --- rich ground pass ----------------------------------------------------
+
+## Second pass with the ArtWorld atlas: broad tonal drifts instead of one flat
+## green, plus clustered detail. Runs over every cell, so no square path
+## blocks survive from the first pass.
+func _paint_ground_rich() -> void:
+	ground.tile_set = ArtWorld.tileset()
+	var path := _path_cells()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 777001
+	for y in range(MAP_H):
+		for x in range(MAP_W):
+			var cell := Vector2i(x, y)
+			ground.set_cell(cell, 0, Vector2i(_ground_tone(cell), 0))
+	for y in range(MAP_H):
+		for x in range(MAP_W):
+			var cell := Vector2i(x, y)
+			if path.has(cell):
+				continue
+			var border := mini(mini(x, y), mini(MAP_W - 1 - x, MAP_H - 1 - y))
+			var wild := 1.0 if border < 7 else 0.22
+			var roll := rng.randf()
+			var tile := -1
+			if roll < 0.16 * wild:
+				tile = 8
+			elif roll < 0.22 * wild:
+				tile = 9
+			elif roll < 0.27 * wild:
+				tile = 6
+			elif roll < 0.30 * wild:
+				tile = 7
+			elif roll < 0.33 * wild:
+				tile = 11
+			elif roll < 0.36 * wild:
+				tile = 10
+			if tile >= 0:
+				ground.set_cell(cell, 0, Vector2i(tile, 0))
+	for cell: Vector2i in _cells_near(CAMPFIRE_TILE, 3):
+		if rng.randf() < 0.55:
+			ground.set_cell(cell, 0, Vector2i(12, 0))
+
+
+## Two smoothed sine fields give soft, coherent patches instead of noise.
+func _ground_tone(cell: Vector2i) -> int:
+	var fx := float(cell.x)
+	var fy := float(cell.y)
+	var drift := sin(fx * 0.37) * 0.45 + sin(fy * 0.29) * 0.33 + sin((fx + fy) * 0.17) * 0.22
+	var border := mini(mini(cell.x, cell.y), mini(MAP_W - 1 - cell.x, MAP_H - 1 - cell.y))
+	if border < 4:
+		return 3
+	if drift > 0.52:
+		return 1
+	if drift > 0.22:
+		return 4
+	if drift < -0.52:
+		return 3
+	if drift < -0.20:
+		return 2
+	return 0
+
+
+# --- trail, undergrowth, camp -------------------------------------------
+
+## The path is a chain of overlapping irregular dirt patches, never tiles, so
+## the trail frays at the edges instead of reading as square blocks.
+func _build_trail() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 6161
+	for i in range(PATH_POINTS.size() - 1):
+		var a: Vector2i = PATH_POINTS[i]
+		var b: Vector2i = PATH_POINTS[i + 1]
+		var from := _tile_center(a)
+		var to := _tile_center(b)
+		var steps := maxi(1, int(round(from.distance_to(to) / 22.0)))
+		for s in range(steps + 1):
+			var t := float(s) / float(steps)
+			var pos := from.lerp(to, t)
+			pos += Vector2(rng.randf_range(-4.0, 4.0), rng.randf_range(-3.0, 3.0))
+			var spr := Sprite2D.new()
+			spr.texture = ArtWorld.dirt_patch(rng.randi_range(0, 2))
+			spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			spr.position = pos
+			spr.scale = Vector2(rng.randf_range(0.92, 1.16), rng.randf_range(0.86, 1.06))
+			decor.add_child(spr)
+
+
+## Tall ferns and shrubs gather along the tree line, so the clearing stays
+## open around the fire while the edges feel dense.
+func _build_undergrowth(path: Dictionary) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20261021
+	for y in range(MAP_H):
+		for x in range(MAP_W):
+			var cell := Vector2i(x, y)
+			if _is_keepout(cell, path):
+				continue
+			var border := mini(mini(x, y), mini(MAP_W - 1 - x, MAP_H - 1 - y))
+			var chance := 0.55 if border < 7 else 0.07
+			if rng.randf() >= chance:
+				continue
+			var spr := Sprite2D.new()
+			spr.texture = ArtWorld.undergrowth(rng.randi_range(0, 2))
+			spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			spr.position = _tile_center(cell) + Vector2(rng.randf_range(-10.0, 10.0), rng.randf_range(-8.0, 8.0))
+			spr.offset = Vector2(0, -8)
+			spr.scale = Vector2.ONE * rng.randf_range(0.6, 1.05)
+			decor.add_child(spr)
+			_sway.append({"node": spr, "phase": rng.randf() * TAU, "amount": 0.02 + rng.randf() * 0.015})
+
+
+## Seat, cooking rig, table and travel supplies: the camp should read as
+## somewhere a chef actually lives, not as an empty clearing.
+func _build_campsite() -> void:
+	var props: Array = [
+		{"tex": ArtWorld.log_seat(), "tile": Vector2i(13, 19), "solid": 11.0},
+		{"tex": ArtWorld.camp_table(), "tile": Vector2i(17, 16), "solid": 10.0},
+		{"tex": ArtWorld.camp_pot(), "tile": Vector2i(16, 17), "solid": 0.0},
+		{"tex": ArtWorld.crate(), "tile": Vector2i(18, 20), "solid": 9.0},
+		{"tex": ArtWorld.basket(), "tile": Vector2i(17, 20), "solid": 7.0},
+		{"tex": ArtWorld.bedroll(), "tile": Vector2i(10, 19), "solid": 0.0},
+	]
+	for entry: Dictionary in props:
+		var tex: Texture2D = entry["tex"]
+		var tile: Vector2i = entry["tile"]
+		var solid: float = entry["solid"]
+		var body := StaticBody2D.new()
+		body.global_position = _tile_center(tile)
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		spr.offset = Vector2(0, -float(tex.get_height()) * 0.5 + 6.0)
+		body.add_child(spr)
+		if solid > 0.0:
+			var shape := CollisionShape2D.new()
+			var circle := CircleShape2D.new()
+			circle.radius = solid
+			shape.shape = circle
+			shape.position = Vector2(0, -4)
+			body.add_child(shape)
+		world.add_child(body)
